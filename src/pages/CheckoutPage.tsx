@@ -3,6 +3,30 @@ import { Form, Input, Button, Typography, Table, message, Spin } from 'antd';
 import axios from 'axios';
 import { useCartStore } from '../store/cartStore';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
+
+const handleSubmit = async (values: any) => {
+  const user = auth.currentUser;
+  if (!user) {
+    message.error('请先登录');
+    return;
+  }
+  const token = await user.getIdToken();
+
+  try {
+    const response = await axios.post('https://pod-backend.onrender.com/api/checkout', {
+      cartItems: ...,
+      shippingAddress: values,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    // ...
+  } catch (error) {
+    // ...
+  }
+};
 
 const { Title, Text } = Typography;
 
@@ -24,7 +48,7 @@ const CheckoutPage: React.FC = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5001/api/checkout', {
+      const response = await axios.post('https://pod-backend-xjt0.onrender.com/api/checkout', {
         cartItems: cart.map((item) => ({
           id: item.id,
           name: item.name,

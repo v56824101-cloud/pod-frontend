@@ -1,8 +1,11 @@
 import React from 'react';
-import { Layout, Menu, Badge, Carousel } from 'antd';
-import { ShoppingCartOutlined } from '@ant-design/icons';
+import { Layout, Menu, Badge, Button, Carousel } from 'antd';
+import { ShoppingCartOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
+import { useAuth } from '../context/AuthContext';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const { Header, Content, Footer } = Layout;
 
@@ -12,6 +15,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const totalItems = useCartStore((state) =>
     state.cart.reduce((sum, item) => sum + item.quantity, 0)
   );
+  const { currentUser } = useAuth();
 
   const menuItems = [
     { key: '/', label: '全部产品' },
@@ -40,13 +44,29 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           items={menuItems}
           style={{ flex: 1 }}
         />
-        <Badge count={totalItems}>
-          <ShoppingCartOutlined
-            style={{ fontSize: '20px', cursor: 'pointer' }}
-            onClick={() => navigate('/cart')}
-          />
-        </Badge>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          {currentUser ? (
+            <>
+              <span style={{ fontSize: '14px' }}>{currentUser.email}</span>
+              <Button type="link" icon={<LogoutOutlined />} onClick={() => signOut(auth)}>
+                退出
+              </Button>
+            </>
+          ) : (
+            <Button type="link" icon={<UserOutlined />} onClick={() => navigate('/login')}>
+              登录
+            </Button>
+          )}
+          <Badge count={totalItems}>
+            <ShoppingCartOutlined
+              style={{ fontSize: '20px', cursor: 'pointer' }}
+              onClick={() => navigate('/cart')}
+            />
+          </Badge>
+        </div>
       </Header>
+
+      {/* 轮播图区域 */}
       <div style={{ background: '#fff' }}>
         <Carousel autoplay autoplaySpeed={4000} style={{ maxHeight: '400px' }}>
           <div>
@@ -72,7 +92,9 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </Carousel>
       </div>
+
       <Content style={{ padding: '24px' }}>{children}</Content>
+
       <Footer style={{ textAlign: 'center', background: '#f0f0f0' }}>
         <p>零库存 · 无忧售后 · 一件代发 · 高净利润</p>
         <p>© 2026 MyPOD. All rights reserved.</p>

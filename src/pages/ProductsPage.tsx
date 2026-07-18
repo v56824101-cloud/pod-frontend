@@ -27,8 +27,8 @@ const ProductsPage: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     const url = category
-      ? `http://localhost:5001/api/products?category=${category}`
-      : 'http://localhost:5001/api/products';
+      ? `https://pod-backend-xjt0.onrender.com/api/products?category=${category}`
+      : 'https://pod-backend-xjt0.onrender.com/api/products';
 
     axios.get(url)
       .then((response) => {

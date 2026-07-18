@@ -27,7 +27,7 @@ const ProductDetailPage: React.FC = () => {
 
   useEffect(() => {
     // 从后端接口获取该 ID 的产品详情
-    axios.get(`http://localhost:5001/api/products/${id}`)
+    axios.get(`https://pod-backend-xjt0.onrender.com/api/products/${id}`)
       .then((res) => {
         setProduct(res.data);
         setLoading(false);
