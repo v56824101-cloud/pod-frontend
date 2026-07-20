@@ -30,6 +30,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
+      {/* 顶部导航栏 */}
       <Header style={{ display: 'flex', alignItems: 'center', background: '#fff', padding: '0 24px' }}>
         <div
           style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '40px', cursor: 'pointer' }}
@@ -93,8 +94,10 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </Carousel>
       </div>
 
+      {/* 页面内容 */}
       <Content style={{ padding: '24px' }}>{children}</Content>
 
+      {/* 底部 */}
       <Footer style={{ textAlign: 'center', background: '#f0f0f0' }}>
         <p>零库存 · 无忧售后 · 一件代发 · 高净利润</p>
         <p>© 2026 MyPOD. All rights reserved.</p>
