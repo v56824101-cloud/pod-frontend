@@ -5,27 +5,55 @@ import { useCartStore } from '../store/cartStore';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 
-const handleSubmit = async (values: any) => {
-  const user = auth.currentUser;
-  if (!user) {
-    message.error('请先登录');
-    return;
-  }
-  const token = await user.getIdToken();
+const CheckoutPage: React.FC = () => {
+  // ... 原有 state 和 store 使用不变
 
-  try {
-    const response = await axios.post('https://pod-backend.onrender.com/api/checkout', {
-      cartItems: ...,
-      shippingAddress: values,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
+const handleSubmit = async (values: any) => {
+    const user = auth.currentUser;
+    if (!user) {
+      message.error('请先登录');
+      navigate('/login');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = await user.getIdToken();   // 获取 Firebase ID Token
+
+      const response = await axios.post(
+        'https://pod-backend.onrender.com/api/checkout',
+        {
+          cartItems: cart.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          shippingAddress: values,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,   // 携带 token
+          },
+        }
+      );
+
+      if (response.data.success) {
+        message.success('下单成功！');
+        clearCart();
+        navigate('/');
+      } else {
+        message.error(response.data.message || '下单失败');
       }
-    });
-    // ...
-  } catch (error) {
-    // ...
-  }
+    } catch (error) {
+      console.error(error);
+      message.error('网络错误或认证失败，请重新登录');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ... 其余 JSX 保持不变
 };
 
 const { Title, Text } = Typography;
