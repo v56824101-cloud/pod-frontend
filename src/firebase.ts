@@ -9,6 +9,7 @@ const firebaseConfig = {
   storageBucket: "mypod-shop.firebasestorage.app",
   messagingSenderId: "105727840696",
   appId: "1:105727840696:web:d90be4cd3e1a285b927f4d"
+  measurementId: "G-PBRP9GE9TG"
 };
 
 const app = initializeApp(firebaseConfig);
